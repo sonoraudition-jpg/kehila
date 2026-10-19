@@ -66,7 +66,7 @@ svg{flex:none}
 .map-top{position:absolute;z-index:10;top:calc(10px + env(safe-area-inset-top));left:max(12px,env(safe-area-inset-left));right:max(12px,env(safe-area-inset-right));display:flex;flex-direction:column;gap:10px;pointer-events:none}
 .map-top>*{pointer-events:auto}
 @media(min-width:900px){.map-top{left:24px;right:auto;width:440px;top:24px}}
-.search{display:flex;align-items:center;gap:8px;height:48px;padding:0 6px 0 14px;border-radius:16px;background:var(--glass);backdrop-filter:blur(20px) saturate(1.8);-webkit-backdrop-filter:blur(20px) saturate(1.8);box-shadow:0 10px 30px -14px rgba(11,22,48,.35),0 0 0 .5px var(--sep);position:relative}
+.search{display:flex;align-items:center;gap:8px;height:48px;padding:0 6px 0 14px;border-radius:16px;background:var(--glass);backdrop-filter:blur(20px) saturate(1.8);-webkit-backdrop-filter:blur(20px) saturate(1.8);box-shadow:0 10px 30px -14px rgba(11,22,48,.35),0 0 0 .5px var(--sep);position:relative;z-index:5}
 .search svg{color:var(--muted)}
 .search input{flex:1;min-width:0;border:0;outline:0;background:none;font:500 16px var(--sys);color:var(--ink)}
 .search input::placeholder{color:var(--faint)}
@@ -86,12 +86,19 @@ svg{flex:none}
 .chip[aria-pressed=true]{background:var(--c);color:#fff}
 .chip[aria-pressed=true] svg{color:#fff}
 .chip:active{transform:scale(.95)}
+.rbar{display:flex;align-items:center;gap:12px;padding:10px 14px;border-radius:16px;background:var(--glass);backdrop-filter:blur(20px) saturate(1.8);-webkit-backdrop-filter:blur(20px) saturate(1.8);box-shadow:0 10px 30px -14px rgba(11,22,48,.35),0 0 0 .5px var(--sep)}
+.rbar label{font-size:13px;font-weight:600;color:var(--muted);white-space:nowrap}
+.rbar output{min-width:62px;text-align:right;font-weight:700;color:var(--blue);font-variant-numeric:tabular-nums}
+.rbar input{flex:1;min-width:0;accent-color:var(--blue);height:28px}
+.target{width:28px;height:28px;border-radius:50%;background:#fff;display:grid;place-items:center;box-shadow:0 6px 16px -4px rgba(11,22,48,.5);cursor:grab}
+.target::after{content:"";width:14px;height:14px;border-radius:50%;background:var(--ink);box-shadow:0 0 0 3px var(--blue)}
 
 .carousel-wrap{position:absolute;z-index:10;left:0;right:0;bottom:12px}
 @media(min-width:900px){.carousel-wrap{bottom:100px;left:24px;right:auto;width:440px}.carousel{padding-left:0!important}.here{margin-left:0!important}}
 .here{display:flex;align-items:center;justify-content:space-between;margin:0 max(16px,env(safe-area-inset-right)) 8px max(16px,env(safe-area-inset-left));gap:8px}
 .here span,.here button{font-size:13px;font-weight:600;background:var(--glass);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);padding:6px 11px;border-radius:999px;box-shadow:0 0 0 .5px var(--sep)}
 .here button{color:var(--blue)}
+.here span{min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.here button{flex:none}
 .carousel{display:flex;gap:10px;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;padding:0 max(16px,env(safe-area-inset-left)) 4px;scroll-padding:0 16px}
 .carousel::-webkit-scrollbar{display:none}
 .pcard{flex:none;width:min(84vw,330px);scroll-snap-align:start;display:flex;gap:12px;align-items:center;padding:12px;border-radius:20px;background:var(--card);box-shadow:0 14px 30px -16px rgba(11,22,48,.45),0 0 0 .5px var(--sep);text-align:left;transition:transform .3s var(--spring),box-shadow .2s}
@@ -255,7 +262,7 @@ svg{flex:none}
     <div class="slide">
       <div class="catgrid" id="catgrid"></div>
       <h2>Filtrez ce dont <em>vous avez besoin</em></h2>
-      <p>Touchez une catégorie pour l'afficher sur la carte. Cherchez une ville ou laissez l'app vous localiser.</p>
+      <p>Tapez une adresse précise, choisissez votre rayon, et voyez tout ce qu'il y a autour.</p>
     </div>
     <div class="slide">
       <div class="mock" aria-hidden="true">
@@ -281,12 +288,13 @@ svg{flex:none}
   <div class="map-top">
     <form class="search" id="sf" role="search">
       <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
-      <label class="sr" for="q">Rechercher une ville</label>
-      <input id="q" name="ville" type="search" enterkeyhint="search" autocomplete="off" spellcheck="false" placeholder="Rechercher une ville…">
+      <label class="sr" for="q">Rechercher une adresse ou une ville</label>
+      <input id="q" name="ville" type="search" enterkeyhint="search" autocomplete="off" spellcheck="false" placeholder="Adresse, rue ou ville…">
       <button type="button" class="loc" id="locate" aria-label="Me localiser"><svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M21 3 3 10.5l7.5 3 3 7.5z"/></svg></button>
       <div class="sugg" id="sugg" hidden></div>
     </form>
     <div class="chips" id="chips"></div>
+    <div class="rbar"><label for="rad">Rayon</label><input id="rad" name="rayon" type="range" min="0" max="10" step="1" aria-describedby="radv"><output id="radv" for="rad"></output></div>
   </div>
   <div class="carousel-wrap">
     <div class="here"><span id="here">Chargement…</span><button id="seeall">Tout voir</button></div>
@@ -325,8 +333,8 @@ svg{flex:none}
     </div>
     <div class="eyebrow">Comment ça marche</div>
     <div class="group steps">
-      <div class="row"><div class="ico sm" style="--c:var(--c-syn)">1</div><div class="t"><b>Trouvez une ville</b><span>Tapez son nom en haut de la carte, ou touchez la flèche pour vous localiser.</span></div></div>
-      <div class="row"><div class="ico sm" style="--c:var(--c-habad)">2</div><div class="t"><b>Choisissez vos catégories</b><span>Touchez les pastilles colorées pour afficher ou masquer chaque type de lieu.</span></div></div>
+      <div class="row"><div class="ico sm" style="--c:var(--c-syn)">1</div><div class="t"><b>Tapez une adresse</b><span>Un point se place exactement dessus (déplaçable du doigt). Ou touchez la flèche pour vous localiser.</span></div></div>
+      <div class="row"><div class="ico sm" style="--c:var(--c-habad)">2</div><div class="t"><b>Réglez le rayon et les catégories</b><span>Le curseur « Rayon » va de 300&nbsp;m à 100&nbsp;km. Les pastilles affichent ou masquent chaque type de lieu.</span></div></div>
       <div class="row"><div class="ico sm" style="--c:var(--c-resto)">3</div><div class="t"><b>Ouvrez une fiche</b><span>Photos, avis, téléphone et horaires. « Itinéraire » ouvre votre GPS.</span></div></div>
       <div class="row"><div class="ico sm" style="--c:var(--c-shop)">4</div><div class="t"><b>Gardez vos adresses</b><span>Le cœur ajoute un lieu à l'onglet Favoris, sur cet appareil.</span></div></div>
     </div>
@@ -408,7 +416,10 @@ function toast(t){const el=$('#toast');el.textContent=t;el.classList.add('on');c
 
 /* ---------- État ---------- */
 const active=new Set(CATS.map(c=>c.id));
-let DB=null,places=[],center={lat:48.8566,lng:2.3522},cityLabel='Paris',radius=8,me=null,current=null;
+const RADII=[0.3,0.5,1,2,3,5,10,15,25,50,100];
+let DB=null,places=[],center={lat:48.8566,lng:2.3522},cityLabel='Paris',me=null,current=null;
+let radius=RADII.includes(store.get('kehila:radius',5))?store.get('kehila:radius',5):5;
+const fmtR=r=>r<1?nf.format(r*1000)+' m':nf.format(r)+' km';
 let favs=store.get('kehila:favs',[]);
 const FIELDS=['cat','lat','lng','name','addr','phone','web','hours','denom','cert','id'];
 const toObj=r=>{const o={};FIELDS.forEach((f,i)=>o[f]=r[i]);return o};
@@ -439,36 +450,55 @@ function toggleCat(e){const b=e.target.closest('.chip');if(!b)return;const id=b.
   render(false);}
 $('#chips').onclick=toggleCat;$('#seg').onclick=toggleCat;
 
+const rad=$('#rad');
+rad.value=RADII.indexOf(radius);$('#radv').textContent=fmtR(radius);
+rad.addEventListener('input',()=>{radius=RADII[+rad.value];$('#radv').textContent=fmtR(radius);circle?.setRadius(radius*1000);filter(false)});
+rad.addEventListener('change',()=>{store.set('kehila:radius',radius);map.flyToBounds(circle.getBounds(),{duration:.8,paddingTopLeft:[0,150],paddingBottomRight:[0,150]})});
 async function dataset(){if(!DB)DB=fetch('data.json').then(r=>r.json());return DB}
 
-async function load(lat,lng,label){
+let pointMarker=null,circle=null;
+function setPoint(lat,lng,label,isMe){
   center={lat,lng};cityLabel=label;
+  pointMarker?.remove();circle?.remove();
+  if(!isMe){
+    pointMarker=L.marker([lat,lng],{draggable:true,zIndexOffset:1000,title:'Point de recherche (déplaçable)',icon:L.divIcon({className:'',html:'<div class="target"></div>',iconSize:[28,28],iconAnchor:[14,14]})}).addTo(map);
+    pointMarker.on('dragend',()=>{const ll=pointMarker.getLatLng();center={lat:ll.lat,lng:ll.lng};cityLabel=label?label.replace(/^(Près de )?/,'Près de '):'Point choisi';drawCircle();filter(false)});
+  }
+  drawCircle();
   $('#addplace').href=`https://www.openstreetmap.org/edit#map=17/${lat}/${lng}`;
+}
+function drawCircle(){
+  circle?.remove();
+  circle=L.circle([center.lat,center.lng],{radius:radius*1000,color:'#0a5cf5',weight:1.5,opacity:.7,fillColor:'#0a5cf5',fillOpacity:.07,interactive:false}).addTo(map);
+}
+async function load(lat,lng,label,isMe){
+  setPoint(lat,lng,label,isMe);
   $('#here').textContent='Recherche…';
-  try{
-    const db=await dataset();
-    let near=[];
-    for(const R of [8,25,60]){radius=R;
-      near=db.filter(r=>Math.abs(r[1]-lat)<R/100&&Math.abs(r[2]-lng)<R/60).map(toObj);
-      near.forEach(o=>o.d=km(center,o));near=near.filter(o=>o.d<=R);if(near.length>=5)break;}
-    places=near.sort((a,b)=>a.d-b.d);render(true);
-  }catch(e){$('#here').textContent='Données indisponibles, rechargez la page.'}
+  try{await dataset();filter(true)}
+  catch(e){$('#here').textContent='Données indisponibles, rechargez la page.'}
+}
+async function filter(fit){
+  const db=await dataset();
+  const {lat,lng}=center,R=radius,dLat=R/110.5,dLng=R/(111.3*Math.max(.05,Math.cos(lat*Math.PI/180)));
+  const near=db.filter(r=>Math.abs(r[1]-lat)<dLat&&Math.abs(r[2]-lng)<dLng).map(toObj);
+  near.forEach(o=>o.d=km(center,o));
+  places=near.filter(o=>o.d<=R).sort((a,b)=>a.d-b.d);
+  render(false);
+  if(fit)map.flyToBounds(circle.getBounds(),{duration:1.1,paddingTopLeft:[0,150],paddingBottomRight:[0,150]});
 }
 const visible=()=>places.filter(p=>active.has(p.cat));
 function render(fit){
   const vis=visible();
-  $('#here').textContent=`${nf.format(vis.length)} lieu${vis.length>1?'x':''} · ${cityLabel||'autour de vous'}`;
+  $('#here').textContent=`${nf.format(vis.length)} lieu${vis.length>1?'x':''} à ${fmtR(radius)} · ${cityLabel||'autour de vous'}`;
   cluster.clearLayers();
   vis.forEach((p,i)=>{
     const m=L.marker([p.lat,p.lng],{title:p.name,icon:L.divIcon({className:'',html:`<div class="pin" style="--c:${CAT[p.cat].c};animation-delay:${Math.min(i*12,500)}ms">${svg(p.cat,16)}</div>`,iconSize:[34,34],iconAnchor:[17,34]})});
     m.on('click',()=>{highlight(p);openSheet(p)});p.m=m;cluster.addLayer(m);
   });
   $('#carousel').innerHTML=vis.slice(0,20).map(p=>`<button class="pcard" style="--c:${CAT[p.cat].c}" data-id="${esc(p.id)}"><div class="ico">${svg(p.cat,20)}</div><div class="t"><b>${esc(p.name)}</b><span>${CAT[p.cat].one} · ${fmtD(p.d)}</span></div>${CHEV}</button>`).join('')
-    ||`<div class="pcard" style="justify-content:center;color:var(--muted)">Aucun lieu ici pour ces catégories.</div>`;
+    ||`<div class="pcard" style="justify-content:center;color:var(--muted)">Aucun lieu dans ce rayon. Agrandissez-le.</div>`;
   $('#carousel').scrollLeft=0;
   renderList();
-  if(fit&&vis.length)map.flyToBounds(L.latLngBounds(vis.slice(0,30).map(p=>[p.lat,p.lng])).pad(.2),{duration:1.1,maxZoom:15,paddingTopLeft:[0,110],paddingBottomRight:[0,130]});
-  else if(fit)map.flyTo([center.lat,center.lng],12,{duration:1.1});
 }
 const byId=id=>places.find(p=>p.id===id)||favs.find(f=>f.id===id);
 $('#carousel').addEventListener('click',e=>{const b=e.target.closest('.pcard');if(!b||!b.dataset.id)return;const p=byId(b.dataset.id);highlight(p,true);openSheet(p)});
@@ -485,8 +515,8 @@ function rowHTML(p){const c=CAT[p.cat];return`<button class="row" style="--c:${c
 function renderList(){
   const q=$('#lq').value.trim().toLowerCase();
   const vis=visible().filter(p=>!q||(p.name+' '+(p.addr||'')).toLowerCase().includes(q));
-  $('#lcount').textContent=`${nf.format(vis.length)} lieu${vis.length>1?'x':''} · ${cityLabel||'autour de vous'} · ${radius} km`;
-  $('#list').innerHTML=vis.length?vis.slice(0,300).map(rowHTML).join(''):`<div class="empty"><div class="ico">${svg('pin',28)}</div><b>Aucun résultat</b><span>Changez de ville ou activez d'autres catégories.</span></div>`;
+  $('#lcount').textContent=`${nf.format(vis.length)} lieu${vis.length>1?'x':''} · ${cityLabel||'autour de vous'} · rayon ${fmtR(radius)}`;
+  $('#list').innerHTML=vis.length?vis.slice(0,300).map(rowHTML).join(''):`<div class="empty"><div class="ico">${svg('pin',28)}</div><b>Aucun résultat</b><span>Agrandissez le rayon, changez d'adresse ou activez d'autres catégories.</span></div>`;
 }
 $('#lq').addEventListener('input',renderList);
 $('#list').addEventListener('click',e=>{const b=e.target.closest('.row');if(b)openSheet(byId(b.dataset.id))});
@@ -604,12 +634,17 @@ $('#savekey').onclick=()=>{const v=$('#gkey').value.trim();store.set('kehila:gke
 
 /* ---------- Recherche ---------- */
 let st;const sugg=$('#sugg');
-async function geocode(v,n=5){const r=await fetch(`https://nominatim.openstreetmap.org/search?format=json&accept-language=fr&limit=${n}&q=`+encodeURIComponent(v));return r.json();}
+async function geocode(v,n=5){const b=map.getBounds();const r=await fetch(`https://nominatim.openstreetmap.org/search?format=jsonv2&addressdetails=1&accept-language=fr&limit=${n}&viewbox=${b.getWest()},${b.getNorth()},${b.getEast()},${b.getSouth()}&q=`+encodeURIComponent(v));return r.json();}
+function labelOf(x){const a=x.address||{};
+  const street=[a.house_number,a.road||a.pedestrian||a.square].filter(Boolean).join(' ');
+  const town=a.city||a.town||a.village||a.municipality||a.suburb||'';
+  const head=x.name&&x.name!==a.road?x.name:(street||x.display_name.split(',')[0]);
+  return{head,sub:[street&&head!==street?street:'',a.postcode,town,a.country].filter(Boolean).join(', '),short:[head,town&&head!==town?town:''].filter(Boolean).join(', ')};}
 $('#q').addEventListener('input',e=>{clearTimeout(st);const v=e.target.value.trim();if(v.length<3){sugg.hidden=true;return}
   st=setTimeout(async()=>{try{const j=await geocode(v);if(!j.length){sugg.hidden=true;return}
-    sugg.innerHTML=j.map((x,i)=>{const [h,...r]=x.display_name.split(',');return`<button type="button" data-i="${i}"><b>${esc(h)}</b><small>${esc(r.join(',').trim())}</small></button>`}).join('');
+    sugg.innerHTML=j.map((x,i)=>{const l=labelOf(x);return`<button type="button" data-i="${i}"><b>${esc(l.head)}</b><small>${esc(l.sub)}</small></button>`}).join('');
     sugg.hidden=false;sugg.onclick=ev=>{const b=ev.target.closest('button');if(b)pick(j[b.dataset.i])};}catch{}},400)});
-function pick(x){sugg.hidden=true;const name=x.display_name.split(',')[0];$('#q').value=name;$('#q').blur();load(+x.lat,+x.lon,name);go('carte')}
+function pick(x){sugg.hidden=true;const l=labelOf(x);$('#q').value=l.short;$('#q').blur();go('carte');load(+x.lat,+x.lon,l.short)}
 $('#sf').onsubmit=async e=>{e.preventDefault();const v=$('#q').value.trim();if(!v)return;
   try{const j=await geocode(v,1);if(!j[0])return toast('Ville introuvable. Vérifiez l’orthographe.');pick(j[0])}catch{toast('Recherche indisponible, réessayez dans un instant.')}};
 map.on('click',()=>{sugg.hidden=true});
@@ -618,7 +653,7 @@ function locate(silent){
   if(!navigator.geolocation){if(!silent)toast('Localisation indisponible sur cet appareil.');return load(center.lat,center.lng,cityLabel)}
   navigator.geolocation.getCurrentPosition(pos=>{me={lat:pos.coords.latitude,lng:pos.coords.longitude};
     meMarker?.remove();meMarker=L.marker([me.lat,me.lng],{icon:L.divIcon({className:'',html:'<div class="me"></div>',iconSize:[20,20]}),interactive:false}).addTo(map);
-    load(me.lat,me.lng,null)},()=>{if(!silent)toast('Localisation refusée : voici Paris.');load(48.8566,2.3522,'Paris')},{timeout:7000});
+    load(me.lat,me.lng,null,true)},()=>{if(!silent)toast('Localisation refusée : voici Paris.');load(48.8566,2.3522,'Paris')},{timeout:7000});
 }
 $('#locate').onclick=()=>locate(false);
 
